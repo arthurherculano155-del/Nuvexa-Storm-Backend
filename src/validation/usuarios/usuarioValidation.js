@@ -4,13 +4,13 @@ export async function ValidarCadastro(user){
     if(!user.email.includes("@") || !user.email.includes("."))
         throw new Error("Email inválido.")
 
-    const validarEmailExistente = await DBUsuarios.validarEmail(user.email);
+    const validarEmailExistente = await DBUsuarios.validarUsuarioExistente(user.email);
 
-    if(validarEmailExistente !== null)
-        throw new Error("Esse email já existe.")
+    if(validarEmailExistente)
+        throw new Error("Esse usuário já existe.")
 
     if(user.senha.length < 8)
-        throw new Error("A senha precisa ter ao menos 8 carácteres.")
+        throw new Error("A senha precisa conter ao menos 8 carácteres.")
 }
 
 export async function ValidarCredenciais(conta, senha){

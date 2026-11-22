@@ -24,9 +24,7 @@ endpoints.post('/usuario/entrar', async (req, resp) => {
         const user = req.body;
         const conta = await Service.logarUsuarioService(user)
 
-        resp.send({
-            resposta: conta
-        })
+        resp.send(conta)
     }
     catch(err){
         resp.status(400).send({

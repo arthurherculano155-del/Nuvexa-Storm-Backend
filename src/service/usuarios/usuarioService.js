@@ -1,10 +1,10 @@
 import * as UsuarioDB from '../../repository/usuarios/usuarioRepository.js';
 import * as Validacao from '../../validation/usuarios/usuarioValidation.js';
 
-import jwt from 'jsonwebtoken';    
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-export async function cadastrarUsuarioService(user){
+export async function cadastrarUsuarioService(user) {
     await Validacao.ValidarCadastro(user);
 
     const senha = await bcrypt.hash(user.senha, 10);
@@ -16,7 +16,7 @@ export async function cadastrarUsuarioService(user){
     return response;
 }
 
-export async function logarUsuarioService(user){
+export async function logarUsuarioService(user) {
     const usuario = await UsuarioDB.validarUsuarioExistente(user.email);
 
     const senhaCorreta = await bcrypt.compare(
@@ -35,8 +35,16 @@ export async function logarUsuarioService(user){
         process.env.JWT_SECRET
     )
 
+    const usuario_informacoes = {
+        id: usuario.id_usuario,
+        nome: usuario.nome,
+        cargo: usuario.cargo,
+        email: usuario.email,
+        imagem_perfil: usuario.imagem_perfil
+    }
+
     return {
-        usuario,
+        usuario_informacoes,
         token
     }
 }
