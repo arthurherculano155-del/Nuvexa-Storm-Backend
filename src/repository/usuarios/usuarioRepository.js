@@ -27,3 +27,21 @@ export async function validarUsuarioExistente(email){
 
     return response[0];
 }
+
+
+export async function AtualizarInformacoes(user) {
+    const command = `
+        UPDATE usuarios
+        SET nome = ?,
+            imagem_perfil = ?
+        WHERE id_usuario = ?
+    `;
+
+    const [resposta] = await con.query(command, [
+        user.nome,
+        user.imagem_perfil,
+        user.id_usuario
+    ]);
+
+    return resposta.affectedRows;
+}

@@ -48,3 +48,11 @@ export async function logarUsuarioService(user) {
         token
     }
 }
+
+export async function AtualizarInformacoesService(req, user) {
+    user.id_usuario = req.usuario.id;
+
+    const response = await UsuarioDB.AtualizarInformacoes(user);
+
+    return response;
+}
