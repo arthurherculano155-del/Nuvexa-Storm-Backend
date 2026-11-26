@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload } from "../../middleware/multer.js";
-import { enviarFotoPerfil } from '../../service/usuarios/cloudinaryService.js';
+import { enviarFotoPerfil } from '../../service/cloudinaryService.js';
 import * as Service from '../../service/usuarios/usuarioService.js';
 import * as Middleware from '../../middleware/autenticacao.js'
 
@@ -47,9 +47,7 @@ endpoints.put(
             if (req.file) {
                 const resultado = await enviarFotoPerfil(req.file.path);
 
-                user.imagem_perfil = resultado.imagem_url;
-            } else {
-                user.imagem_perfil = req.body.imagem_perfil;
+                user.imagem_perfil = resultado;
             }
 
             const resposta = await Service.AtualizarInformacoesService(
@@ -69,5 +67,66 @@ endpoints.put(
         }
     }
 );
+
+endpoints.get(
+    '/usuarios/listar',
+    Middleware.autenticar,
+    Middleware.appenasAdmins,
+    async (req, resp) => {
+        try {
+            const user = req.query.email
+            const resposta = await Service.listarUsuariosService(user);
+
+            resp.send(resposta)
+        }
+        catch (err) {
+            resp.status(400).send({
+                erro: err.message
+            });
+        }
+    }
+)
+
+endpoints.put(
+    '/usuario/trocar-cargo/:email',
+    Middleware.autenticar,
+    Middleware.appenasAdmins,
+    async (req, resp) => {
+        try {
+            const email = req.params.email;
+
+            await Service.trocarCargoService(email);
+
+            resp.send({
+                resposta: `Cargo de ${email} alterado com sucesso!`
+            })
+        }
+        catch (err) {
+            resp.status(400).send({
+                erro: err.message
+            })
+        }
+})
+
+endpoints.delete(
+    '/usuario/deletar/:email',
+    Middleware.autenticar,
+    Middleware.appenasAdmins,
+    async (req, resp) => {
+        try {
+            const email = req.params.email;
+
+            await Service.deletarUsuarioService(email);
+
+            resp.send({
+                resposta: `O usuário com email: ${email} foi deletado com sucesso!`
+            })
+        }
+        catch (err) {
+            resp.status(400).send({
+                erro: err.message
+            })
+        }
+})
 
 export default endpoints;

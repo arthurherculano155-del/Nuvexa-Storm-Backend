@@ -29,8 +29,10 @@ export async function logarUsuarioService(user) {
     const token = jwt.sign(
         {
             id: usuario.id_usuario,
-            cargo: usuario.cargo,
-            email: usuario.email
+            nome: usuario.nome,
+            email: usuario.email,
+            imagem_perfil: usuario.imagem_perfil,
+            cargo: usuario.cargo
         },
         process.env.JWT_SECRET
     )
@@ -49,10 +51,28 @@ export async function logarUsuarioService(user) {
     }
 }
 
+export async function listarUsuariosService(user){
+    const response = await UsuarioDB.listarUsuarios(user);
+
+    return response;
+}
+
 export async function AtualizarInformacoesService(req, user) {
     user.id_usuario = req.usuario.id;
 
     const response = await UsuarioDB.AtualizarInformacoes(user);
+
+    return response;
+}
+
+export async function trocarCargoService(email){
+    const response = await UsuarioDB.trocarCargo(email);
+
+    return response;
+}
+
+export async function deletarUsuarioService(email){
+    const response = await UsuarioDB.deletarUsuario(email);
 
     return response;
 }

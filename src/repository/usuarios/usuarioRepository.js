@@ -1,6 +1,6 @@
-import {con} from '../connection.js';
+import { con } from '../connection.js';
 
-export async function cadastrarUsuario(user){
+export async function cadastrarUsuario(user) {
     const command = `
         INSERT INTO usuarios(nome, email, cargo, senha, imagem_perfil)
         values (?, ?, ?, ?, ?)
@@ -17,7 +17,21 @@ export async function cadastrarUsuario(user){
     return resposta
 }
 
-export async function validarUsuarioExistente(email){
+export async function listarUsuarios(user) {
+    const command = `
+        select * from usuarios
+        where email like ?
+        order by cargo, email
+    `
+
+    const [resposta] = await con.query(command, [
+        `%${user}%`
+    ]);
+
+    return resposta;
+}
+
+export async function validarUsuarioExistente(email) {
     const command = `
         select * from usuarios
         where email = ?
@@ -44,4 +58,29 @@ export async function AtualizarInformacoes(user) {
     ]);
 
     return resposta.affectedRows;
+}
+
+export async function trocarCargo(email) {
+    const command = `
+        UPDATE usuarios
+        SET cargo = CASE
+            WHEN cargo = 'Usuario' THEN 'Admin'
+            WHEN cargo = 'Admin' THEN 'Usuario'
+        END
+        WHERE email = ?
+    `
+
+    const [resposta] = await con.query(command, [email]);
+
+    return resposta;
+}
+
+export async function deletarUsuario(email){
+    const command = `
+        delete from usuarios
+        where email = ?
+    `
+    const [resposta] = await con.query(command, [email]);
+
+    return resposta;
 }

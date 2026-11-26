@@ -31,7 +31,7 @@ export function autenticar(req, resp, next){
 }
 
 export function appenasAdmins(req, resp, next){
-    if(req.usuario.cargo !== "admin"){
+    if(req.usuario.cargo !== "Admin"){
         return resp.status(401).send({
             erro: "Acesso permitido apenas para administradores!"
         })
